@@ -14,7 +14,7 @@ def write_alias(alias_name, image_name, keep):
     if not keep:
         alias_statement = alias_statement + " --rm "
 
-    alias_statement = alias_statement + " -v \"$(PWD):/shared\" -w \"\\shared\" " + image_name + "'\n"
+    alias_statement = alias_statement + " -v \"$(PWD):/shared\" -w \"/shared\" " + image_name + "'\n"
 
     bash_profile.write(alias_statement)
 
