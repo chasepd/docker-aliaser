@@ -6,13 +6,21 @@ import os
 import subprocess
 
 
-def write_alias(alias_name, image_name, keep):
+def write_alias(alias_name, image_name, keep, ports=None):
+
+    if ports is not None:
+        ports = ports.split(",")
+
     bash_profile = open(expanduser("~") + "/.bash_profile", "a")
 
     alias_statement = "alias " + alias_name + "='docker run -it"
 
     if not keep:
         alias_statement = alias_statement + " --rm "
+
+    if ports is not None:
+        for port in ports:
+            alias_statement = alias_statement + " -p " + port + ":" + port
 
     alias_statement = alias_statement + " -v \"$(PWD):/shared\" -w \"/shared\" " + image_name + "'\n"
 
@@ -43,6 +51,8 @@ if __name__ == "__main__":
                         type=str)
     parser.add_argument("image_name", help="Name of docker image",
                         type=str)
+    parser.add_argument('--ports', action="store",
+                        dest="ports", help="Ports to forward in the docker image, separated by commas")
     parser.add_argument("--keep", help="Keep image after running",
                         action="store_true")
 
@@ -51,4 +61,4 @@ if __name__ == "__main__":
     if alias_exists(args.alias_name):
         print ("Alias already exists. Please choose another alias name.")
     else:
-        write_alias(args.alias_name, args.image_name, args.keep)
+        write_alias(args.alias_name, args.image_name, args.keep, args.ports)
